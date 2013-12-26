@@ -1,9 +1,15 @@
 Intro
 -----
 
-Modified version of [Matthew Petroff's script](http://www.mpetroff.net/archives/2012/09/14/kindle-weather-display/) to display current weather information on an e-ink screen
+Modified version of [Matthew Petroff's script](http://www.mpetroff.net/archives/2012/09/14/kindle-weather-display/) to display current weather information on an e-ink screen.
 
-Changes
+Here is an example of it running a Nook Somple Touch
+
+![nook](http://i.imgur.com/uSXlJ3Q.jpg "Nook weather")
+
+(note that running it on a Nook requires the companion [WeatherShow](https://github.com/zeronickname/WeatherShow) android app -- or well, anything that can display png's really)
+
+Changes (from MPetroff's version)
 -------
 
 * Uses forecast.io for the weather information (original script used NOAA data and was US only)
