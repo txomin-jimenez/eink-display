@@ -15,7 +15,8 @@ Pre-Requisites
 --------------
 * [forecast.io API key](https://developer.forecast.io/)
 * [python-forecastio](https://github.com/ZeevG/python-forcast.io)
-
+* rsvg-convert to convert the svg to a png (sudo apt-get install librsvg2-bin)
+* pngcrush to optimize/reduce teh filesize (sudo apt-get install pngcrush)
 
 Inctructions for use
 --------------------
