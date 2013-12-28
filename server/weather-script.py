@@ -6,6 +6,7 @@ import codecs
 def main():
 
 
+
     api_key = "YOUR_FORECAST.IO_API_KEY"
     lat = 51.477
     lng = 0.0000
@@ -23,10 +24,15 @@ def main():
 
     #insert summary of day text
     summary=textwrap.wrap(forecast.hourly().summary,55)
+
+    wrappedsummary = summary[0]
+
+    # the pre-process svg file has space for three lines of text. ANy more and we cut it off
     if len(summary) > 1  :
-        wrappedsummary = summary[0] + '<tspan x="25" dy="25">' + summary[1] + '</tspan>'
-    else:
-        wrappedsummary = summary[0]
+        wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[1] + '</tspan>'
+        if len(summary) > 2  :
+            wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[2] + '</tspan>'
+        
 
     output = output.replace('TODAY_SUMMARY',wrappedsummary)
 
