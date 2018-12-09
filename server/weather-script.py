@@ -1,6 +1,7 @@
 from datetime import datetime
 from time import strftime
 from tzlocal import get_localzone
+from pytz import timezone
 import codecs
 import forecastio
 import locale
@@ -8,14 +9,21 @@ import os
 import pytz
 import textwrap
 
+TIME_LANG = "es_ES"
+UTC = pytz.utc
+LOCAL_TZ = timezone('Europe/Madrid')
+
 def main():
-    time_locale = "es_ES"
-    locale.setlocale(locale.LC_TIME, time_locale)
+    locale.setlocale(locale.LC_TIME, TIME_LANG)
+
     forecastio_api_key = os.environ['FORECASTIO_API_KEY']
 
     forecast = WeatherForecast(forecastio_api_key)
 
     ImageBuilder(forecast).build().save()
+
+def localize_utc_date(utc_timestamp):
+    return UTC.localize(utc_timestamp).astimezone(LOCAL_TZ)
 
 class WeatherForecast:
     lat = 43.2
@@ -48,11 +56,8 @@ class WeatherForecast:
         def __init__(self, forecast):
             self.forecast = forecast
 
-        def local_time(self):
-            return self.forecast.time.replace(tzinfo=pytz.UTC).astimezone(get_localzone())
-
         def label(self):
-            return self.local_time().strftime('%A').capitalize().decode('utf-8')
+            return localize_utc_date(self.forecast.time).strftime('%A').capitalize().decode('utf-8')
 
         def icon(self):
             return self.forecast.icon
@@ -122,7 +127,7 @@ class ImageBuilder:
         self.replace_content('LOW_FOUR', self.day_four_forecast.temperatureMin())
 
     def __build_current_timestamp(self):
-        timestamp = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(get_localzone()).strftime("%H:%M %d/%m")
+        timestamp = localize_utc_date(datetime.utcnow()).strftime("%H:%M %d/%m")
         self.replace_content('DATE_TIME', timestamp)
 
 
