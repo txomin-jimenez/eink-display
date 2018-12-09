@@ -1,56 +1,130 @@
-from time import gmtime, strftime
-import forecastio
-import textwrap
+from datetime import datetime
+from time import strftime
+from tzlocal import get_localzone
 import codecs
+import forecastio
 import locale
-
-api_key = ""
-lat = 43.2
-lng = -2.077222
-language = "es"
-time_locale = "es_ES"
+import os
+import pytz
+import textwrap
 
 def main():
+    time_locale = "es_ES"
     locale.setlocale(locale.LC_TIME, time_locale)
+    forecastio_api_key = os.environ['FORECASTIO_API_KEY']
 
-    forecast = get_forecast()
-    forecast_by_day = forecast.daily()
+    forecast = WeatherForecast(forecastio_api_key)
 
-    # Open SVG to process
-    output = codecs.open('weather-script-preprocess.svg', 'r', encoding='utf-8').read()
+    ImageBuilder(forecast).build().save()
 
-    # Insert icons and temperatures
-    output = output.replace('ICON_ONE',forecast_by_day.data[0].icon).replace('ICON_TWO',forecast_by_day.data[1].icon).replace('ICON_THREE',forecast_by_day.data[2].icon).replace('ICON_FOUR',forecast_by_day.data[3].icon)
-    output = output.replace('HIGH_ONE',str(int(round(forecast_by_day.data[0].temperatureMax)))).replace('HIGH_TWO',str(int(round(forecast_by_day.data[1].temperatureMax)))).replace('HIGH_THREE',str(int(round(forecast_by_day.data[2].temperatureMax)))).replace('HIGH_FOUR',str(int(round(forecast_by_day.data[3].temperatureMax))))
-    output = output.replace('LOW_ONE',str(int(round(forecast_by_day.data[0].temperatureMin)))).replace('LOW_TWO',str(int(round(forecast_by_day.data[1].temperatureMin)))).replace('LOW_THREE',str(int(round(forecast_by_day.data[2].temperatureMin)))).replace('LOW_FOUR',str(int(round(forecast_by_day.data[3].temperatureMin))))
+class WeatherForecast:
+    lat = 43.2
+    lng = -2.077222
+    language = "es"
 
-    #insert summary of day text
-    summary=textwrap.wrap(forecast.hourly().summary,55)
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.forecast = forecastio.load_forecast(self.api_key, self.lat, self.lng, lang=self.language)
 
-    wrappedsummary = summary[0]
+    def today_summary(self):
+        summary = textwrap.wrap(self.forecast.hourly().summary, 55)
+        return self.__wrap_summary(summary)
 
-    # the pre-process svg file has space for three lines of text. ANy more and we cut it off
-    if len(summary) > 1  :
-        wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[1] + '</tspan>'
-        if len(summary) > 2  :
-            wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[2] + '</tspan>'
+    def daily(self):
+        forecast_by_day = self.forecast.daily()
+        return map(lambda day_data: WeatherForecast.Day(day_data), forecast_by_day.data)
 
+    def __wrap_summary(self, summary):
+        wrappedsummary = summary[0]
+        # the pre-process svg file has space for three lines of text. ANy more and we cut it off
+        if len(summary) > 1  :
+            wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[1] + '</tspan>'
+            if len(summary) > 2  :
+                wrappedsummary = wrappedsummary + '<tspan x="25" dy="25">' + summary[2] + '</tspan>'
 
-    output = output.replace('TODAY_SUMMARY',wrappedsummary)
+        return wrappedsummary
 
-    # Insert days of week
-    day_three_label = forecast_by_day.data[2].time.strftime('%A').capitalize()
-    day_four_label = forecast_by_day.data[3].time.strftime('%A').capitalize()
-    output = output.replace('DAY_THREE', day_three_label).replace('DAY_FOUR', day_four_label)
+    class Day:
+        def __init__(self, forecast):
+            self.forecast = forecast
 
-    #Insert timestamp
-    output = output.replace('DATE_TIME', strftime("%H:%M %d/%m", gmtime()))
+        def local_time(self):
+            return self.forecast.time.replace(tzinfo=pytz.UTC).astimezone(get_localzone())
 
-    # Write output
-    codecs.open('weather-script-output.svg', 'w', encoding='utf-8').write(output)
+        def label(self):
+            return self.local_time().strftime('%A').capitalize().decode('utf-8')
 
-def get_forecast():
-    return forecastio.load_forecast(api_key, lat, lng, lang=language)
+        def icon(self):
+            return self.forecast.icon
+
+        def temperatureMax(self):
+            return str(int(round(self.forecast.temperatureMax)))
+
+        def temperatureMin(self):
+            return str(int(round(self.forecast.temperatureMin)))
+
+class ImageBuilder:
+    template_file = 'weather-script-preprocess.svg'
+    output_file = 'weather-script-output.svg'
+
+    def __init__(self, forecast):
+        # Open SVG to process
+        self.template = codecs.open(self.template_file, 'r', encoding='utf-8').read()
+        self.output = self.template
+
+        self.forecast = forecast
+        forecast_by_day = forecast.daily()
+
+        self.today_forecast = forecast_by_day[0]
+        self.tomorrow_forecast = forecast_by_day[1]
+        self.day_three_forecast = forecast_by_day[2]
+        self.day_four_forecast = forecast_by_day[3]
+
+    def build(self):
+        self.__build_today_summary()
+        self.__build_weekday_labels()
+        self.__build_icons()
+        self.__build_max_temperatures()
+        self.__build_min_temperatures()
+        self.__build_current_timestamp()
+        return self
+
+    def save(self):
+        codecs.open(self.output_file, 'w', encoding='utf-8').write(self.output)
+
+    def replace_content(self, template_key, content):
+        self.output = self.output.replace(template_key, content)
+
+    def __build_today_summary(self):
+        summary = self.forecast.today_summary()
+        self.replace_content('TODAY_SUMMARY', summary)
+
+    def __build_weekday_labels(self):
+        self.replace_content('DAY_THREE', self.day_three_forecast.label())
+        self.replace_content('DAY_FOUR', self.day_four_forecast.label())
+
+    def __build_icons(self):
+        self.replace_content('ICON_ONE', self.today_forecast.icon())
+        self.replace_content('ICON_TWO', self.tomorrow_forecast.icon())
+        self.replace_content('ICON_THREE', self.day_three_forecast.icon())
+        self.replace_content('ICON_FOUR', self.day_four_forecast.icon())
+
+    def __build_max_temperatures(self):
+        self.replace_content('HIGH_ONE', self.today_forecast.temperatureMax())
+        self.replace_content('HIGH_TWO', self.tomorrow_forecast.temperatureMax())
+        self.replace_content('HIGH_THREE', self.day_three_forecast.temperatureMax())
+        self.replace_content('HIGH_FOUR', self.day_four_forecast.temperatureMax())
+
+    def __build_min_temperatures(self):
+        self.replace_content('LOW_ONE', self.today_forecast.temperatureMin())
+        self.replace_content('LOW_TWO', self.tomorrow_forecast.temperatureMin())
+        self.replace_content('LOW_THREE', self.day_three_forecast.temperatureMin())
+        self.replace_content('LOW_FOUR', self.day_four_forecast.temperatureMin())
+
+    def __build_current_timestamp(self):
+        timestamp = datetime.utcnow().replace(tzinfo=pytz.UTC).astimezone(get_localzone()).strftime("%H:%M %d/%m")
+        self.replace_content('DATE_TIME', timestamp)
+
 
 if __name__ == "__main__":
     main()
