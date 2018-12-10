@@ -9,7 +9,7 @@ import os
 import pytz
 import textwrap
 
-TIME_LANG = "es_ES"
+TIME_LANG = "es_ES.UTF-8"
 UTC = pytz.utc
 LOCAL_TZ = timezone('Europe/Madrid')
 
