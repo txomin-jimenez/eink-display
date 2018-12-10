@@ -1,21 +1,22 @@
 Intro
 -----
 
-Modified version of [Matthew Petroff's script](http://www.mpetroff.net/archives/2012/09/14/kindle-weather-display/) to display current weather information on an e-ink screen.
+For more information on the orignal inspiration see [the original blog post](http://www.mpetroff.net/archives/2012/09/14/kindle-weather-display/).
 
-Here is an example of it running a Nook Somple Touch
+Code originally designed by [mpetroff](https://github.com/mpetroff/kindle-weather-display), modified by [zeronickname](https://github.com/zeronickname/kindle-weather-display) before ending up here.
 
-![nook](http://i.imgur.com/uSXlJ3Q.jpg "Nook weather")
+Server script is running on a Raspberry PI 1.
+Nook script is scheduled in Nook device using and old version of Tasker.
 
-(note that running it on a Nook requires the companion [WeatherShow](https://github.com/zeronickname/WeatherShow) android app -- or well, anything that can display png's really)
+![nook](https://i.imgur.com/CGwU3L3.png "Nook weather")
 
-Changes (from MPetroff's version)
+Changes (from zeronickname's version)
 -------
 
-* Uses forecast.io for the weather information (original script used NOAA data and was US only)
-* Switched to using icons from [The Noun Project](http://thenounproject.com/collections/weather-icons/)
-* Minor mods to the actual information displayed (timestamp, human redable weather info)
-
+* Refactored server script into smaller pieces.
+* Show weather forecast using spanish language
+* Localize timestamps because I had issues with timezones
+* A new script for Nook device that updates lock image and refreshes device screen.
 
 Pre-Requisites
 --------------
@@ -24,7 +25,3 @@ Pre-Requisites
 * rsvg-convert to convert the svg to a png (sudo apt-get install librsvg2-bin)
 * pngcrush to optimize/reduce the final image filesize (sudo apt-get install pngcrush)
 
-Inctructions for use
---------------------
-
-TBD
