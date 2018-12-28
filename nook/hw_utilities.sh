@@ -30,12 +30,12 @@ wake_device() {
         fi
 }
 
-su -c 'svc wifi enable'
-sleep 10
-# download and update lock image
-wget -O /media/screensavers/photo_frame/weather.png http://server/weather/weather.png;
-su -c 'svc wifi disable'
-# refresh screen for getting new lock image
-wake_device
-sleep 1
-sleep_device
+enable_wifi()
+{
+        su -c 'svc wifi enable'
+}
+
+disable_wifi()
+{
+        su -c 'svc wifi disable'
+}
