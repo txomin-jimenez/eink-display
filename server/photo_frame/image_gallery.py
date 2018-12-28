@@ -2,7 +2,7 @@ import os
 import subprocess
 from werkzeug.utils import secure_filename
 
-GALLERY_FOLDER = '/tmp/photo_frame'
+GALLERY_FOLDER = './www/photo_gallery'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 def allowed_file(filename):
