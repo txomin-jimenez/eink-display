@@ -1,5 +1,5 @@
 #!/system/bin/sh
-source ./hw_utilities.sh
+. hw_utilities.sh
 
 enable_wifi
 sleep 10
