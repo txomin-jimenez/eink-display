@@ -134,6 +134,17 @@ resize_portrait()
   aspect_ratio=$1
   new_height=$(echo "600/$aspect_ratio" | bc)
   mogrify -resize 600x${new_height} $TEMP_FILENAME
+
+  echo $new_height
+}
+
+crop_portrait()
+{
+  height=$1
+  crop_y=$(($height - 800))
+  crop_y=$(($crop_y / 2))
+
+  mogrify -crop 600x800+0+${crop_y} $TEMP_FILENAME
 }
 
 convert_to_grayscale()
@@ -163,7 +174,8 @@ if [[ $(echo "$aspect_ratio > 1" | bc -l) -eq 1 ]]; then
   crop_landscape $new_width
 else
   echo "portrait"
-  resize_portrait $aspect_ratio
+  new_height=$(resize_portrait $aspect_ratio)
+  crop_portrait $new_height
 fi
 convert_to_grayscale
 save_output
