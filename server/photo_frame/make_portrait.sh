@@ -85,24 +85,46 @@ resize_landscape()
   echo $new_width
 }
 
-calc_image_center()
+calc_crop_x()
 {
+  # calc crop x taking faces into account if any
   width=$1
   image_center=$(echo "$width/2" | bc)
-  face_x=$(facedetect --center $TEMP_FILENAME)
-  if [[ ! -z $face_x ]]; then
-    face_x=($face_x)
-    face_x=${face_x[0]}
-    echo $(($face_x - 300))
-  else
-    echo $(($image_center - 300))
+
+  face_coordinates=$(facedetect --center $TEMP_FILENAME)
+  if [[ ! -z $face_coordinates ]]; then
+    face_coordinates=($face_coordinates)
+    faces_count=${#face_coordinates[@]}
+
+    face_min_x=999999
+    face_max_x=0
+    for (( i=0; i<$faces_count; i++ )); do
+      value=${face_coordinates[$i]}
+      # we find x values in even index values
+      if [ $((i%2)) -eq 0 ]; then
+        if [ $value -gt $face_max_x ]; then
+          face_max_x=$value;
+        fi
+        if [ $value -lt $face_min_x ]; then
+          face_min_x=$value;
+        fi
+      fi
+    done
+    image_center=$face_min_x
+    faces_diff_x=$((face_max_x - face_min_x))
+    if [ ! $faces_diff_x -eq 0 ]; then
+      # if there are more than one face calc faces center
+      faces_center=$(($faces_diff_x / 2))
+      image_center=$(($image_center + $faces_center))
+    fi
   fi
+  echo $(($image_center - 300))
 }
 
 crop_landscape()
 {
   width=$1
-  crop_x=$(calc_image_center $width)
+  crop_x=$(calc_crop_x $width)
   echo 600x800+${crop_x}+0
   mogrify -crop 600x800+${crop_x}+0 $TEMP_FILENAME
 }
