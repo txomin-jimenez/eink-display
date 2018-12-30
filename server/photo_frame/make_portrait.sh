@@ -179,3 +179,4 @@ else
 fi
 convert_to_grayscale
 save_output
+echo finished
