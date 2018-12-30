@@ -17,7 +17,7 @@ def save_photo(photo_file):
     return filename
 
 def make_portrait(photo_path):
-    subprocess.Popen(['./photo_frame/make_portrait.sh', photo_path])
+    subprocess.run(['./photo_frame/make_portrait.sh', photo_path])
 
 def random_photo():
     command = 'ls {} | sort -R | tail -n 1'.format(GALLERY_FOLDER)
