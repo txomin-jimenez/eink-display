@@ -1,4 +1,4 @@
-from flask import flash, request, redirect, url_for, send_from_directory
+from flask import request, redirect, url_for, send_from_directory
 
 from photo_frame import image_gallery
 from photo_frame import upload_form
@@ -16,18 +16,20 @@ def init_app(app):
   @app.route('/photo_frame/upload', methods=['GET', 'POST'])
   def upload_photo():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+        if request.headers['x-ios-shortcut']:
+          filename = image_gallery.save_from_data(request.data)
+          return redirect(url_for('show_photo', filename=filename))
+        else:
+          if 'file' not in request.files:
+              return redirect(request.url)
 
-        file = request.files['file']
+          file = request.files['file']
 
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+          if file.filename == '':
+              return redirect(request.url)
 
-        if file and image_gallery.allowed_file(file.filename):
-            filename = image_gallery.save_photo(file)
-            return redirect(url_for('show_photo', filename=filename))
+          if file and image_gallery.allowed_file(file.filename):
+              filename = image_gallery.save_photo(file)
+              return redirect(url_for('show_photo', filename=filename))
 
     return upload_form.render()
