@@ -1,7 +1,7 @@
 #!/bin/bash
 # convert to grayscale 600x800 png portrait image. if image is landscape, crop image taking people faces into account
 INPUT_FILENAME=$1
-TEMP_FILENAME="temp.png"
+TEMP_FILENAME="temp_$(date +%s).png"
 
 create_temp_image_from()
 {
@@ -143,7 +143,7 @@ crop_portrait()
   height=$1
   crop_y=$(($height - 800))
   crop_y=$(($crop_y / 2))
-
+  echo 600x800+0+${crop_y}
   mogrify -crop 600x800+0+${crop_y} $TEMP_FILENAME
 }
 
