@@ -16,7 +16,8 @@ Server
 Server is a small Python Flask app for serving display image in a single endpoint.
 This endpoint has a schedule that switches between photo frame and weather forecast module every 30 minutes.
 
-* Weather forecast module
+* **Weather forecast module**
+
   Weather code script originally designed by [mpetroff](https://github.com/mpetroff/kindle-weather-display), modified by [zeronickname](https://github.com/zeronickname/kindle-weather-display) before ending up here. Changes (from zeronickname's version):
 
   * Refactored server script into smaller pieces.
@@ -27,7 +28,7 @@ This endpoint has a schedule that switches between photo frame and weather forec
 
   ![nook](https://i.imgur.com/CGwU3L3.png "Nook weather")
 
-* Photo frame
+* **Photo frame**
   * Photo gallery folder
   * Random image from gallery is served
   * Photo upload form
@@ -59,8 +60,10 @@ Usage
 -----
 
 Server development:
-`$ cd server`
-`$ pip3 install -r requirements.txt`
-`$ flask run`
+```
+$ cd server
+$ pip3 install -r requirements.txt
+$ flask run
+```
 
 Useful link for deploying production server with Gunicorn: [link](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
