@@ -33,7 +33,7 @@ def notify_nook_disconnected(last_hearbeat):
 def localize_utc_date(utc_timestamp):
     LOCAL_TZ = timezone('Europe/Madrid')
     UTC = utc
-    return UTC.localize(utc_timestamp).astimezone(LOCAL_TZ)
+    return UTC.localize(utc_timestamp).astimezone(LOCAL_TZ).strftime('%Y-%m-%d %H:%M:%S.%f')
 
 def get_last_heartbeat():
     try:
