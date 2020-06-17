@@ -21,10 +21,10 @@ def notify_nook_disconnected(last_hearbeat):
     bot = os.environ['NOTIFY_BOT']
     token = os.environ['NOTIFY_TOKEN']
     chat_id = os.environ['NOTIFY_CHATID']
-    url = f"https://api.telegram.org/{bot}:{token}/sendMessage"
+    url = "https://api.telegram.org/" + bot + ":" + token + "/sendMessage"
     message = {
         "chat_id": chat_id,
-        "text": f"🔋 Se ha perdido la conexion con el marco de fotos desde {localize_utc_date(last_hearbeat)}. Toca recargarlo 🔌"
+        "text": "🔋 Se ha perdido la conexion con el marco de fotos desde " + localize_utc_date(last_hearbeat) + ". Toca recargarlo 🔌"
     }
     data = parse.urlencode(message).encode()
     req =  request.Request(url, data=data)
