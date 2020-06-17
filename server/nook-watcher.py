@@ -4,7 +4,7 @@ import time
 from urllib import request, parse
 from pytz import timezone, utc
 
-WAIT_INTERVAL = 10
+WAIT_INTERVAL = 1800
 HEARTBEAT_FILE = 'heartbeat'
 
 def main():
