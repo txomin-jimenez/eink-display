@@ -8,13 +8,14 @@ WAIT_INTERVAL = 1800
 HEARTBEAT_FILE = 'heartbeat'
 
 def main():
+    print("Running....")
     while True:
         last_hearbeat = get_last_heartbeat()
         current_datetime = datetime.utcnow()
         difference = current_datetime - last_hearbeat
         if difference.seconds > WAIT_INTERVAL:
             notify_nook_disconnected(last_hearbeat)
-
+        print("Wait " + WAIT_INTERVAL + " seconds until next check...")
         time.sleep(WAIT_INTERVAL)
 
 def notify_nook_disconnected(last_hearbeat):
