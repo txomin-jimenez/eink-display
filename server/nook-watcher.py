@@ -15,7 +15,7 @@ def main():
         difference = current_datetime - last_hearbeat
         if difference.seconds > WAIT_INTERVAL:
             notify_nook_disconnected(last_hearbeat)
-        print("Wait " + WAIT_INTERVAL + " seconds until next check...")
+        print("Wait " + str(WAIT_INTERVAL) + " seconds until next check...")
         time.sleep(WAIT_INTERVAL)
 
 def notify_nook_disconnected(last_hearbeat):
