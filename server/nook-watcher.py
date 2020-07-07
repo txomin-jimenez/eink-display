@@ -19,6 +19,9 @@ def main():
         time.sleep(WAIT_INTERVAL)
 
 def notify_nook_disconnected(last_hearbeat):
+    if is_time_to_not_disturb():
+        return
+
     bot = os.environ['NOTIFY_BOT']
     token = os.environ['NOTIFY_TOKEN']
     chat_id = os.environ['NOTIFY_CHATID']
@@ -30,6 +33,10 @@ def notify_nook_disconnected(last_hearbeat):
     data = parse.urlencode(message).encode()
     req =  request.Request(url, data=data)
     resp = request.urlopen(req)
+
+def is_time_to_not_disturb():
+    now = datetime.now()
+    return now.hour >= 23 and now.hour <= 8
 
 def localize_utc_date(utc_timestamp):
     LOCAL_TZ = timezone('Europe/Madrid')
