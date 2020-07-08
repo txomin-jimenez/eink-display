@@ -8,20 +8,22 @@ WAIT_INTERVAL = 1800
 HEARTBEAT_FILE = 'heartbeat'
 
 def main():
-    print("Running....")
+    log("Running....")
     while True:
         last_hearbeat = get_last_heartbeat()
         current_datetime = datetime.utcnow()
         difference = current_datetime - last_hearbeat
         if difference.seconds > WAIT_INTERVAL:
             notify_nook_disconnected(last_hearbeat)
-        print("Wait " + str(WAIT_INTERVAL) + " seconds until next check...")
+        log("Wait " + str(WAIT_INTERVAL) + " seconds until next check...")
         time.sleep(WAIT_INTERVAL)
 
 def notify_nook_disconnected(last_hearbeat):
     if is_time_to_not_disturb():
+        log("DND hours. do not notify")
         return
 
+    log("notify nook is disconnected...")
     bot = os.environ['NOTIFY_BOT']
     token = os.environ['NOTIFY_TOKEN']
     chat_id = os.environ['NOTIFY_CHATID']
@@ -52,6 +54,9 @@ def get_last_heartbeat():
     except FileNotFoundError:
         return datetime.utcnow()
 
+def log(message):
+    now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    print('[' + now + '] - ' + message)
 
 if __name__ == "__main__":
     main()
