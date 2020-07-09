@@ -38,7 +38,7 @@ def notify_nook_disconnected(last_hearbeat):
 
 def is_time_to_not_disturb():
     now = datetime.now()
-    return now.hour >= 21 and now.hour <= 8
+    return now.hour >= 21 or now.hour <= 8
 
 def localize_utc_date(utc_timestamp):
     LOCAL_TZ = timezone('Europe/Madrid')
