@@ -40,7 +40,7 @@ class WeatherForecast:
 
     def daily(self):
         forecast_by_day = self.forecast.daily()
-        return map(lambda day_data: WeatherForecast.Day(day_data), forecast_by_day.data)
+        return list(map(lambda day_data: WeatherForecast.Day(day_data), forecast_by_day.data))
 
     def __wrap_summary(self, summary):
         wrappedsummary = summary[0]
@@ -57,7 +57,7 @@ class WeatherForecast:
             self.forecast = forecast
 
         def label(self):
-            return localize_utc_date(self.forecast.time).strftime('%A').capitalize().decode('utf-8')
+            return localize_utc_date(self.forecast.time).strftime('%A').capitalize()
 
         def icon(self):
             return self.forecast.icon
