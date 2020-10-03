@@ -10,7 +10,11 @@ RUN apt-get install 'ffmpeg' \
   'pngcrush' \
   'librsvg2-bin' \
   'imagemagick' \
-  'bc'
+  'bc' \
+  'locales'
+
+RUN sed -i 's/^# *\(es_ES.UTF-8\)/\1/' /etc/locale.gen
+RUN locale-gen
 
 WORKDIR /tmp
 RUN wget https://gitlab.com/wavexx/facedetect/-/archive/master/facedetect-master.zip
