@@ -17,5 +17,13 @@ push: image login
 local: image
 	@docker run --rm \
 		-p 5000:5000 \
+		-v $(PWD):/opt/eink-display \
 		--name=$(SERVICE) $(IMAGE) \
 		bash -c "flask run -h 0.0.0.0"
+
+shell: image
+	@docker run --rm -it \
+		-p 5000:5000 \
+		-v $(PWD):/opt/eink-display \
+		--name=$(SERVICE) $(IMAGE) \
+		bash
