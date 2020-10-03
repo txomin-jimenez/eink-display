@@ -1,5 +1,9 @@
 # /bin/bash
 
+# init cron
+echo "FORECASTIO_API_KEY=$FORECASTIO_API_KEY" >> /etc/environment
+cron
+
 # turn on bash's job control
 set -m
 

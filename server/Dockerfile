@@ -11,10 +11,16 @@ RUN apt-get install 'ffmpeg' \
   'librsvg2-bin' \
   'imagemagick' \
   'bc' \
-  'locales'
+  'locales' \
+  'cron'
 
 RUN sed -i 's/^# *\(es_ES.UTF-8\)/\1/' /etc/locale.gen
 RUN locale-gen
+
+COPY ./weather/weather.cron /etc/cron.d/eink-weather
+RUN chmod 0644 /etc/cron.d/eink-weather
+RUN crontab /etc/cron.d/eink-weather
+RUN touch /var/log/weatherjob.log
 
 WORKDIR /tmp
 RUN wget https://gitlab.com/wavexx/facedetect/-/archive/master/facedetect-master.zip
