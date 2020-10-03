@@ -2,5 +2,6 @@
 *-output.*
 *pycache*
 venv
-www
+www/photo_gallery/*
+www/weather/*
 heartbeat
