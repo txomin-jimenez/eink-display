@@ -16,7 +16,7 @@ def init_app(app):
   @app.route('/photo_frame/upload', methods=['GET', 'POST'])
   def upload_photo():
     if request.method == 'POST':
-        if request.headers['x-ios-shortcut']:
+        if 'x-ios-shortcut' in request.headers:
           filename = image_gallery.save_from_data(request.data)
           return redirect(url_for('show_photo', filename=filename))
         else:
