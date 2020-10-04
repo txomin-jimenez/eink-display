@@ -7,13 +7,13 @@ This allows to reuse this devices as photo frames or dashboard for information t
 For more information on the original inspiration see [the original blog post](http://www.mpetroff.net/archives/2012/09/14/kindle-weather-display/).
 
 Code is split in two pieces:
-  * Server: to be deployed in a Raspberry PI for example.
+  * Server: to be deployed using Docker or in a Raspberry PI for example.
   * Nook: client script for getting display updates from server.
 
 Server
 --------
 
-Server is a small Python Flask app for serving display image in a single endpoint.
+Server is a small Python webserver for serving display image in a single endpoint.
 This endpoint has a schedule that switches between photo frame and weather forecast module every 30 minutes.
 
 * **Weather forecast module**
@@ -24,15 +24,16 @@ This endpoint has a schedule that switches between photo frame and weather forec
   * Show weather forecast using spanish language
   * Localize timestamps because I had issues with timezones
 
-  `weather-script.sh` must be scheduled using cron inside server. Python API will only serve updated image at this time.
+  `weather-script.sh` is scheduled using cron. Web API serves updated weather forecast image.
 
   ![nook](https://i.imgur.com/CGwU3L3.png "Nook weather")
 
 * **Photo frame**
-  * Photo gallery folder
-  * Random image from gallery is served
-  * Photo upload form
-  * Uploads via POST
+
+  A random photo from gallery is served.
+
+  * Photo upload web form available at `/photo_frame/upload`
+  * Uploads via web api using POST also available
   * Special addition for uploading photos with iOS shortcuts.
   * Photos are converted to 600x800 greyscale portrait images
   * Face recognition to properly crop landscape images taking people into account
@@ -47,6 +48,11 @@ This requires a rooted Nook device with cron or a old version of Tasker for sche
 
 Pre-Requisites
 --------------
+
+A Docker image for backend server is provided for easier development and deployment:
+* [Docker](https://www.docker.com/get-started)
+
+Dependencies for non-docker environment:
 * Python 3
 * [forecast.io API key](https://developer.forecast.io/)
 * [python-forecastio](https://github.com/ZeevG/python-forcast.io)
@@ -56,14 +62,13 @@ Pre-Requisites
 * [Facedetect](https://github.com/wavexx/facedetect)
 * [OpenCV](https://life2coding.com/install-opencv-3-4-0-python-3-raspberry-pi-3)
 
+Useful link for deploying production server with Gunicorn: [link](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
+
 Usage
 -----
 
 Server development:
 ```
 $ cd server
-$ pip3 install -r requirements.txt
-$ flask run
+$ make local
 ```
-
-Useful link for deploying production server with Gunicorn: [link](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xvii-deployment-on-linux)
