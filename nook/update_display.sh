@@ -8,5 +8,5 @@ wget -O /media/screensavers/e-ink-display/image.png http://server:port/e-ink-dis
 disable_wifi
 # refresh screen for getting new lock image
 wake_device
-sleep 1
+sleep 2
 sleep_device
